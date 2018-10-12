@@ -1,0 +1,20 @@
+{
+  "name": "exchangeretriever",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "aws-sdk": "^2.333.0",
+    "csv-writer": "^1.2.0",
+    "express": "^4.16.4",
+    "moment": "^2.22.2"
+  },
+  "devDependencies": {
+    "@types/express": "^4.16.0"
+  }
+}
