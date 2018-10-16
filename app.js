@@ -1,4 +1,12 @@
 var AWS = require('aws-sdk');
+AWS.config.update({region: 'ap-southeast-2'});
+// var myConfig = new AWS.Config();
+// myConfig.update({region: 'southeast-2'});
+var params = {
+    Message: 'MESSAGE_TEXT', /* required */
+    TopicArn: 'arn:aws:sns:ap-southeast-2:256368627721:exchangeRetriever'
+};
+
 const express = require('express');
 const app = express();
 const port= 3000;
@@ -31,12 +39,33 @@ var j = schedule.scheduleJob(repeatAt, function(){
     });
 });
 
+
+
 app.get('/generate',(req,res)=>{
 
     request('https://api.coingecko.com/api/v3/exchanges/bithumb', function (error, response, body) {
         if (!error && response.statusCode === 200) {
             generateCSV(JSON.parse(body));
             res.send("done");
+            var publishTextPromise = new AWS.SNS({apiVersion: '2010-03-31'}).publish(params).promise();
+            publishTextPromise.then(
+                function(data) {
+                    console.log(`Message ${params.Message} send sent to the topic ${params.TopicArn}`);
+                    console.log("MessageID is " + data.MessageId);
+                }).catch(
+                function(err) {
+                    console.error(err, err.stack);
+                });
+            // var subslistPromise = new AWS.SNS({apiVersion: '2010-03-31'}).listSubscriptionsByTopic({TopicArn : 'arn:aws:sns:ap-southeast-2:256368627721:exchangeRetriever'}).promise();
+            //
+            // subslistPromise.then(
+            //     function(data) {
+            //         console.log(data);
+            //     }).catch(
+            //     function(err) {
+            //         console.error(err, err.stack);
+            //     }
+            // );
         }
     });
 
